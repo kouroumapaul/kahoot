@@ -3,6 +3,7 @@ package com.example.kahoot.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,10 +32,20 @@ public class GameSession {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "gameSession", cascade = CascadeType.PERSIST)
-    private List<Player> players;
+    @OneToMany(mappedBy = "gameSession")
+    private List<Player> players = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "kahoot_id", nullable = false)
     private Kahoot kahoot;
+
+    public void addPlayer(Player player) {
+        players.add(player);
+        player.setGameSession(this);
+    }
+
+    public void removePlayer(Player player) {
+        players.remove(player);
+        player.setGameSession(null);
+    }
 }

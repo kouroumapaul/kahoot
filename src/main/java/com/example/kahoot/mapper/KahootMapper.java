@@ -17,13 +17,11 @@ public interface KahootMapper {
     KahootDto toKahootDto(Kahoot kahoot);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "creator", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "questions", ignore = true)
     @Mapping(target = "createdAt", expression = "java(new java.util.Date())")
     Kahoot toKahoot(KahootCreateDto kahootCreateDto);
 
-    @Mapping(target = "questionCount", expression = "java(kahoot.getQuestions().size())")
-    KahootSummaryDto toKahootSummaryDto(Kahoot kahoot);
 
     void updateKahootFromDto(KahootUpdateDto kahootUpdateDto, @MappingTarget Kahoot kahoot);
 }

@@ -3,6 +3,7 @@ package com.example.kahoot.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,9 +17,10 @@ public class Player {
 
     private String nickname;
 
-    private String profilePictureURL;
+    private Date createdAt;
 
-    @ManyToOne
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "game_session_id", nullable = false)
     private GameSession gameSession;
 

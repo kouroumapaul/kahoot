@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/kahoots")
 public class KahootController {
-
     private final KahootService kahootService;
 
     @Autowired

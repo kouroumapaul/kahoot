@@ -24,15 +24,13 @@ public class UserService {
 
     public UserDto findUserByUsername(String username) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-        return user.map(UserMapper.INSTANCE::toUserDto).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return user.map(UserMapper.INSTANCE::toUserDto)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
     }
 
     public UserDto createUser(UserCreationDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new RuntimeException("Username already exists");
-        }
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new RuntimeException("Email already exists");
         }
 
         User user = UserMapper.INSTANCE.toUser(userDto);

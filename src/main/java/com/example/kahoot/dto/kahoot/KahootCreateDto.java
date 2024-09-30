@@ -18,5 +18,5 @@ public class KahootCreateDto {
     private String coverImageURL;
 
     @NotNull(message = "L'identifiant de l'utilisateur est obligatoire")
-    private Long creatorId;
+    private Long userId;
 }

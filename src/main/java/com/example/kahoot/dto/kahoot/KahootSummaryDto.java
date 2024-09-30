@@ -10,8 +10,5 @@ public class KahootSummaryDto {
     private String title;
     private String description;
     private boolean isPublic;
-    private String coverImageURL;
-    private UserSummaryDto creator;
-    private int questionCount;
     private Date createdAt;
 }
