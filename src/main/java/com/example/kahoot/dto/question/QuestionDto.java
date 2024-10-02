@@ -1,20 +1,19 @@
 package com.example.kahoot.dto.question;
 
 import com.example.kahoot.dto.answer.AnswerDto;
-import com.example.kahoot.dto.kahoot.KahootSummaryDto;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class QuestionSummaryDto {
+public class QuestionDto {
     private String content;
     private Integer points;
     private Date createdAt;
-    private Integer order;
+    private Integer questionOrder;
     private String questionType;
-    private List<AnswerDto> answers;
-    private Boolean isCorrect;
-    private KahootSummaryDto kahoot;
+    private List<AnswerDto> answers; // Pour les questions à choix multiple
+    private Boolean isCorrect; // Pour les questions vrai/faux
+    private Long kahootId;
 }

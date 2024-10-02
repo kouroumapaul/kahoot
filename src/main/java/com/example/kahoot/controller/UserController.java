@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/users", produces = "application/json")
 public class UserController {
-
     private final UserService userService;
 
     @Autowired
@@ -31,4 +30,10 @@ public class UserController {
         UserDto createdUser = userService.createUser(userCreationDto);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
+
+    @GetMapping
+    public ResponseEntity<Iterable<UserDto>> findAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
+    }
+
 }

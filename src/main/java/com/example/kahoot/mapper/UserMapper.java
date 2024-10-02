@@ -2,10 +2,12 @@ package com.example.kahoot.mapper;
 
 import com.example.kahoot.dto.user.UserCreationDto;
 import com.example.kahoot.dto.user.UserDto;
+import com.example.kahoot.dto.user.UserSummaryDto;
 import com.example.kahoot.model.User;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -23,4 +25,7 @@ public interface UserMapper {
 
     @IterableMapping(elementTargetType = User.class)
     Iterable<User> toUsers(Iterable<UserDto> userDtos);
+
+    @Named("toUserSummaryDto")
+    UserSummaryDto toUserSummaryDto(User user);
 }

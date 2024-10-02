@@ -59,9 +59,6 @@ public class PlayerService {
             throw new IllegalArgumentException("Game session with game pin " + playerCreationDto.getGamePin() + " not found");
         }
 
-
-
-
         Player player = new Player();
         player.setNickname(playerCreationDto.getNickname());
 

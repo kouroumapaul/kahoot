@@ -1,8 +1,13 @@
 package com.example.kahoot.dto.gameSession;
 
+import com.example.kahoot.dto.kahoot.KahootDto;
+import com.example.kahoot.dto.kahoot.KahootSummaryDto;
+import com.example.kahoot.dto.player.PlayerDto;
+import com.example.kahoot.dto.user.UserSummaryDto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class GameSessionDto {
@@ -12,6 +17,7 @@ public class GameSessionDto {
     private Date createdAt;
     private String gamePin;
     private String url;
-    private Long userId;
-    private Long kahootId;
+    private UserSummaryDto user;
+    private KahootSummaryDto kahoot;
+    private List<PlayerDto> players;
 }

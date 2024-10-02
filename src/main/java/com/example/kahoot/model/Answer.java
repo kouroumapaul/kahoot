@@ -1,5 +1,6 @@
 package com.example.kahoot.model;
 
+import com.example.kahoot.model.question.Question;
 import jakarta.persistence.*;
 import lombok.Data;
 

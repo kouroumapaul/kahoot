@@ -51,13 +51,13 @@ public class GameSessionService {
         gameSession.setKahoot(kahoot);
 
         gameSessionRepository.save(gameSession);
-        return gameSessionMapper.toDto(gameSession);
+        return gameSessionMapper.INSTANCE.toDto(gameSession);
     }
 
     public GameSessionDto findGameSessionByGamePin(String gamePin) {
         GameSession gameSession = gameSessionRepository.findByGamePin(gamePin)
                 .orElseThrow(() -> new IllegalArgumentException("Game session not found"));
-        return gameSessionMapper.toDto(gameSession);
+        return gameSessionMapper.INSTANCE.toDto(gameSession);
     }
 
     private String generateUniqueGamePin() {

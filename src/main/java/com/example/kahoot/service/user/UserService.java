@@ -9,17 +9,21 @@ import com.example.kahoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private UserMapper userMapper = UserMapper.INSTANCE;
 
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     public UserDto findUserByUsername(String username) {
@@ -36,5 +40,10 @@ public class UserService {
         User user = UserMapper.INSTANCE.toUser(userDto);
         User savedUser = userRepository.save(user);
         return UserMapper.INSTANCE.toUserDto(savedUser);
+    }
+
+    public Iterable<UserDto> findAllUsers() {
+        Iterable<User> users = userRepository.findAll();
+        return userMapper.toUserDtos(users);
     }
 }

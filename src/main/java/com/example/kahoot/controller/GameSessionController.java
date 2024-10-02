@@ -26,4 +26,10 @@ public class GameSessionController {
         return new ResponseEntity<>(createdGameSession, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{gamePin}")
+    public ResponseEntity<GameSessionDto> findGameSessionByGamePin(@PathVariable String gamePin) {
+        GameSessionDto gameSession = gameSessionService.findGameSessionByGamePin(gamePin);
+        return new ResponseEntity<>(gameSession, HttpStatus.OK);
+    }
+
 }

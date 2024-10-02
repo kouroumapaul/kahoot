@@ -13,7 +13,7 @@ public class KahootDto {
     private String description;
     private boolean isPublic;
     private String coverImageURL;
-    private UserSummaryDto creator;
+    private UserSummaryDto user;
     private List<QuestionSummaryDto> questions;
     private Date createdAt;
 }

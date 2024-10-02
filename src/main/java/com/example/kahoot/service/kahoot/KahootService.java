@@ -2,6 +2,7 @@ package com.example.kahoot.service.kahoot;
 
 import com.example.kahoot.dto.kahoot.KahootCreateDto;
 import com.example.kahoot.dto.kahoot.KahootDto;
+import com.example.kahoot.dto.kahoot.KahootSummaryDto;
 import com.example.kahoot.exception.ResourceNotFoundException;
 import com.example.kahoot.mapper.KahootMapper;
 import com.example.kahoot.model.Kahoot;
@@ -32,10 +33,21 @@ public class KahootService {
         User user = userRepository.findById(kahootCreateDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", kahootCreateDto.getUserId()));
 
-        Kahoot kahoot = kahootMapper.toKahoot(kahootCreateDto);
+        Kahoot kahoot = kahootMapper.INSTANCE.toKahoot(kahootCreateDto);
         user.addKahoot(kahoot);
 
         Kahoot savedKahoot = kahootRepository.save(kahoot);
-        return kahootMapper.toKahootDto(savedKahoot);
+        return kahootMapper.INSTANCE.toKahootDto(savedKahoot);
+    }
+
+    public KahootDto getKahoot(Long kahootId) {
+        Kahoot kahoot = kahootRepository.findById(kahootId)
+                .orElseThrow(() -> new ResourceNotFoundException("Kahoot", "id", kahootId));
+        return kahootMapper.INSTANCE.toKahootDto(kahoot);
+    }
+
+    public Iterable<KahootSummaryDto> findAllKahoots() {
+        Iterable<Kahoot> kahoots = kahootRepository.findAll();
+        return kahootMapper.INSTANCE.toKahootDtos(kahoots);
     }
 }
