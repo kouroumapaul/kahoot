@@ -22,8 +22,7 @@ public interface QuestionMapper {
         } else if (question instanceof TrueFalseQuestion) {
             return toTrueFalseQuestionDto((TrueFalseQuestion) question);
         }
-        // Gérer d'autres types de questions si nécessaire
-        return toBaseQuestionDto(question);
+        throw new IllegalArgumentException("The question type is not supported");
     }
 
     @Mapping(target = "answers", source = "answers")
@@ -32,9 +31,6 @@ public interface QuestionMapper {
     @Mapping(target = "isCorrect", source = "isCorrect")
     QuestionSummaryDto toTrueFalseQuestionDto(TrueFalseQuestion question);
 
-    @Mapping(target = "answers", ignore = true)
-    @Mapping(target = "isCorrect", ignore = true)
-    QuestionSummaryDto toBaseQuestionDto(Question question);
 
 
     default String getQuestionType(Question question) {
