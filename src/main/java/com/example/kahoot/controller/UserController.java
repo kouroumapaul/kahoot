@@ -1,5 +1,7 @@
 package com.example.kahoot.controller;
 
+import com.example.kahoot.annotation.LogExecutionTime;
+import com.example.kahoot.annotation.MonitorPerformance;
 import com.example.kahoot.dto.user.UserCreationDto;
 import com.example.kahoot.dto.user.UserDto;
 import com.example.kahoot.service.user.UserService;
@@ -32,6 +34,8 @@ public class UserController {
     }
 
     @GetMapping
+    @LogExecutionTime
+    @MonitorPerformance
     public ResponseEntity<Iterable<UserDto>> findAllUsers() {
         return ResponseEntity.ok(userService.findAllUsers());
     }

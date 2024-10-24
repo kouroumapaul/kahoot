@@ -1,5 +1,6 @@
 package com.example.kahoot.service.user;
 
+import com.example.kahoot.annotation.LogExecutionTime;
 import com.example.kahoot.dto.user.UserCreationDto;
 import com.example.kahoot.dto.user.UserDto;
 import com.example.kahoot.exception.ResourceNotFoundException;
@@ -42,6 +43,7 @@ public class UserService {
         return UserMapper.INSTANCE.toUserDto(savedUser);
     }
 
+    @LogExecutionTime
     public Iterable<UserDto> findAllUsers() {
         Iterable<User> users = userRepository.findAll();
         return userMapper.toUserDtos(users);
