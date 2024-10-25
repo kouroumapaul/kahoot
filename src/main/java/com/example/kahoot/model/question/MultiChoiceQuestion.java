@@ -1,5 +1,6 @@
 package com.example.kahoot.model.question;
 
+import com.example.kahoot.exception.InvalidAnswerException;
 import com.example.kahoot.model.Answer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
@@ -24,7 +25,7 @@ public class MultiChoiceQuestion extends Question {
     @Override
     public boolean checkAnswer(Object userAnswer) {
         if (!(userAnswer instanceof List)) {
-            throw new IllegalArgumentException("La réponse doit être une liste d'IDs pour les questions à choix multiple");
+            throw new InvalidAnswerException("Invalid answer format for multiple choice question");
         }
         List<Long> idsReponses = (List<Long>) userAnswer;
         List<Long> idsReponsesCorrectes = answers.stream()

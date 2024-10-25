@@ -28,10 +28,6 @@ public class GameSession {
     private String url;
 
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @OneToMany(mappedBy = "gameSession")
     private List<Player> players = new ArrayList<>();
 

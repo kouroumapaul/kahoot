@@ -17,7 +17,6 @@ public class GameSessionDto {
     private Date createdAt;
     private String gamePin;
     private String url;
-    private UserSummaryDto user;
     private KahootSummaryDto kahoot;
     private List<PlayerDto> players;
 }

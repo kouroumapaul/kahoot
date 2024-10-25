@@ -1,5 +1,6 @@
 package com.example.kahoot.model.question;
 
+import com.example.kahoot.exception.InvalidAnswerException;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class TrueFalseQuestion extends Question {
     @Override
     public boolean checkAnswer(Object userAnswer) {
         if (!(userAnswer instanceof Boolean)) {
-            throw new IllegalArgumentException("La réponse doit être un booléen pour les questions vrai/faux");
+            throw new InvalidAnswerException("Invalid answer format for true/false question");
         }
         return userAnswer == isCorrect;
     }

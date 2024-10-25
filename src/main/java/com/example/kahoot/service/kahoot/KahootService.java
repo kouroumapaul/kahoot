@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KahootService {
-
     private final KahootRepository kahootRepository;
     private final KahootMapper kahootMapper;
     private final UserRepository userRepository;
-
 
     @Autowired
     public KahootService(KahootRepository kahootRepository, KahootMapper kahootMapper, UserRepository userRepository) {
@@ -35,19 +33,52 @@ public class KahootService {
 
         Kahoot kahoot = kahootMapper.INSTANCE.toKahoot(kahootCreateDto);
         user.addKahoot(kahoot);
-
         Kahoot savedKahoot = kahootRepository.save(kahoot);
+
         return kahootMapper.INSTANCE.toKahootDto(savedKahoot);
     }
 
     public KahootDto getKahoot(Long kahootId) {
         Kahoot kahoot = kahootRepository.findById(kahootId)
                 .orElseThrow(() -> new ResourceNotFoundException("Kahoot", "id", kahootId));
+
         return kahootMapper.INSTANCE.toKahootDto(kahoot);
     }
 
     public Iterable<KahootSummaryDto> findAllKahoots() {
         Iterable<Kahoot> kahoots = kahootRepository.findAll();
         return kahootMapper.INSTANCE.toKahootDtos(kahoots);
+    }
+
+    @Transactional
+    public KahootDto updateKahoot(Long kahootId, KahootCreateDto kahootUpdateDto) {
+        Kahoot existingKahoot = kahootRepository.findById(kahootId)
+                .orElseThrow(() -> new ResourceNotFoundException("Kahoot", "id", kahootId));
+
+        User user = userRepository.findById(kahootUpdateDto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", kahootUpdateDto.getUserId()));
+
+
+        Kahoot updatedKahoot = kahootMapper.INSTANCE.toKahoot(kahootUpdateDto);
+        updatedKahoot.setId(existingKahoot.getId());
+        updatedKahoot.setUser(existingKahoot.getUser());
+
+        // Si l'utilisateur a changé, gérer la relation
+        if (!existingKahoot.getUser().equals(user)) {
+            existingKahoot.getUser().removeKahoot(existingKahoot);
+            user.addKahoot(updatedKahoot);
+        }
+
+        Kahoot savedKahoot = kahootRepository.save(updatedKahoot);
+        return kahootMapper.INSTANCE.toKahootDto(savedKahoot);
+    }
+
+    @Transactional
+    public void deleteKahoot(Long kahootId) {
+        Kahoot kahoot = kahootRepository.findById(kahootId)
+                .orElseThrow(() -> new ResourceNotFoundException("Kahoot", "id", kahootId));
+
+        kahoot.getUser().removeKahoot(kahoot);
+        kahootRepository.delete(kahoot);
     }
 }

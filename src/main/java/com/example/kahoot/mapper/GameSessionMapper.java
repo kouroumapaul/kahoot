@@ -11,14 +11,10 @@ public interface GameSessionMapper {
 
     GameSessionMapper INSTANCE = Mappers.getMapper(GameSessionMapper.class);
 
-    @Mapping(target = "user" , source = "user")
+
     @Mapping(target = "kahoot", source = "kahoot")
     @Mapping(target = "players", source = "players")
     GameSessionDto toDto(GameSession gameSession);
 
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "kahoot", ignore = true)
-    @Mapping(target = "players", ignore = true)
-    GameSession toEntity(GameSessionDto gameSessionDto);
 }
 

@@ -3,6 +3,7 @@ package com.example.kahoot.service.user;
 import com.example.kahoot.annotation.LogExecutionTime;
 import com.example.kahoot.dto.user.UserCreationDto;
 import com.example.kahoot.dto.user.UserDto;
+import com.example.kahoot.exception.ResourceAlreadyExistsException;
 import com.example.kahoot.exception.ResourceNotFoundException;
 import com.example.kahoot.mapper.UserMapper;
 import com.example.kahoot.model.User;
@@ -16,10 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private UserMapper userMapper = UserMapper.INSTANCE;
-
 
     @Autowired
     public UserService(UserRepository userRepository, UserMapper userMapper) {
@@ -35,12 +34,33 @@ public class UserService {
 
     public UserDto createUser(UserCreationDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new ResourceAlreadyExistsException("User", "username", userDto.getUsername());
         }
-
         User user = UserMapper.INSTANCE.toUser(userDto);
         User savedUser = userRepository.save(user);
         return UserMapper.INSTANCE.toUserDto(savedUser);
+    }
+
+    public UserDto updateUser(String username, UserCreationDto userUpdateDto) {
+        User existingUser = userRepository.findByUsername(username);
+        if (existingUser == null) {
+            throw new ResourceNotFoundException("User", "username", username);
+        }
+
+        existingUser.setUsername(userUpdateDto.getUsername());
+        existingUser.setEmail(userUpdateDto.getEmail());
+        existingUser.setPassword(userUpdateDto.getPassword());
+
+        User updatedUser = userRepository.save(existingUser);
+        return UserMapper.INSTANCE.toUserDto(updatedUser);
+    }
+
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new ResourceNotFoundException("User", "username", username);
+        }
+        userRepository.delete(user);
     }
 
     @LogExecutionTime

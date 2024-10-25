@@ -12,14 +12,9 @@ public interface PlayerMapper {
 
     PlayerMapper INSTANCE = Mappers.getMapper(PlayerMapper.class);
 
+    @Mapping(target = "gameSession", source = "gameSession")
     PlayerDto toPlayerDto(Player player);
 
     @Mapping(target = "createdAt", expression = "java(new java.util.Date())")
     Player toPlayer(PlayerDto playerDto);
-
-    @IterableMapping(elementTargetType = PlayerDto.class)
-    Iterable<PlayerDto> toPlayerDtos(Iterable<Player> players);
-
-    @IterableMapping(elementTargetType = Player.class)
-    Iterable<Player> toPlayers(Iterable<PlayerDto> playerDtos);
 }

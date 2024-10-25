@@ -20,25 +20,20 @@ import java.util.Random;
 public class GameSessionService {
 
     private final GameSessionRepository gameSessionRepository;
-    private final UserRepository userRepository;
     private final KahootRepository kahootRepository;
     private final GameSessionMapper gameSessionMapper;
 
     @Autowired
     public GameSessionService(GameSessionRepository gameSessionRepository,
-                              UserRepository userRepository,
                               KahootRepository kahootRepository,
                               GameSessionMapper gameSessionMapper) {
         this.gameSessionRepository = gameSessionRepository;
-        this.userRepository = userRepository;
         this.kahootRepository = kahootRepository;
         this.gameSessionMapper = gameSessionMapper;
     }
 
     @Transactional
     public GameSessionDto createGameSession(GameCreateDto gameCreateDto) {
-        User user = userRepository.findById(gameCreateDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Kahoot kahoot = kahootRepository.findById(gameCreateDto.getKahootId())
                 .orElseThrow(() -> new IllegalArgumentException("Kahoot not found"));
@@ -47,7 +42,6 @@ public class GameSessionService {
         gameSession.setStarAt(new Date());
         gameSession.setCreatedAt(new Date());
         gameSession.setGamePin(generateUniqueGamePin());
-        gameSession.setUser(user);
         gameSession.setKahoot(kahoot);
 
         gameSessionRepository.save(gameSession);

@@ -10,17 +10,14 @@ import java.util.List;
 @Entity
 @Table(name = "players")
 public class Player {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nickname;
-
     private Date createdAt;
+    private Integer score;
 
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "game_session_id", nullable = false)
     private GameSession gameSession;
 

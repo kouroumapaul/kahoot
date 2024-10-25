@@ -12,8 +12,8 @@ public class OpenAPIConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Mon API")
+                        .title("Kahot Quiz API")
                         .version("1.0")
-                        .description("Description de mon API"));
+                        .description("REST API for managing Kahoot quizzes"));
     }
 }
