@@ -47,7 +47,7 @@ public class SecurityConfig {
                                     "/public/**"
 
                             ).permitAll()
-                            .anyRequest().permitAll();
+                            .anyRequest().authenticated();
                 });
 
         return http.build();

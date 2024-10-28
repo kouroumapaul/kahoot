@@ -9,16 +9,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/kahoots")
 @Tag(name = "Kahoot")
+@SecurityRequirement(name = "bearerAuth")
 public class KahootController {
     private final KahootService kahootService;
 
@@ -107,9 +110,12 @@ public class KahootController {
             )
     })
     @DeleteMapping("/{kahootId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteKahoot(
             @Parameter(description = "ID of the Kahoot to delete", required = true) @PathVariable Long kahootId) {
         kahootService.deleteKahoot(kahootId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+     
 }

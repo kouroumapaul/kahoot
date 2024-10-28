@@ -86,6 +86,7 @@ public class QuestionService {
         question.setCreatedAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : new Date());
         question.setContent(dto.getContent());
         question.setQuestionOrder(dto.getQuestionOrder());
+        question.setPoints(dto.getPoints());
 
         return question;
     }

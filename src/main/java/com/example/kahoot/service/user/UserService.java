@@ -8,7 +8,11 @@ import com.example.kahoot.exception.ResourceNotFoundException;
 import com.example.kahoot.mapper.UserMapper;
 import com.example.kahoot.model.User;
 import com.example.kahoot.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,7 +53,6 @@ public class UserService {
 
         existingUser.setUsername(userUpdateDto.getUsername());
         existingUser.setEmail(userUpdateDto.getEmail());
-        existingUser.setPassword(userUpdateDto.getPassword());
 
         User updatedUser = userRepository.save(existingUser);
         return UserMapper.INSTANCE.toUserDto(updatedUser);
@@ -67,5 +70,26 @@ public class UserService {
     public Iterable<UserDto> findAllUsers() {
         Iterable<User> users = userRepository.findAll();
         return userMapper.toUserDtos(users);
+    }
+
+    @Transactional
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken token) {
+            String keycloakId = token.getName();
+
+            return userRepository.findByKeycloakId(keycloakId)
+                    .orElseGet(() -> createUserFromToken(token));
+        }
+        throw new IllegalStateException("User not authenticated");
+    }
+
+    @Transactional
+    public User createUserFromToken(JwtAuthenticationToken token) {
+        User user = new User();
+        user.setKeycloakId(token.getName());
+        user.setUsername(token.getTokenAttributes().get("preferred_username").toString());
+        user.setEmail(token.getTokenAttributes().get("email").toString());
+        return userRepository.save(user);
     }
 }

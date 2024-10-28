@@ -1,7 +1,10 @@
 package com.example.kahoot.service.playerAnswer;
 
 import com.example.kahoot.dto.playerAnswer.PlayerAnswerDto;
+import com.example.kahoot.dto.playerAnswer.PlayerAnswerSummaryDto;
+import com.example.kahoot.exception.InvalidAnswerException;
 import com.example.kahoot.exception.ResourceNotFoundException;
+import com.example.kahoot.mapper.PlayerAnswerMapper;
 import com.example.kahoot.model.*;
 import com.example.kahoot.model.question.Question;
 import com.example.kahoot.repository.*;
@@ -15,56 +18,70 @@ import java.util.List;
 @Transactional
 public class PlayerAnswerService {
     private final PlayerAnswerRepository playerAnswerRepository;
+    private final PlayerAnswerMapper playerAnswerMapper;
     private final PlayerRepository playerRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
     public PlayerAnswerService(
             PlayerAnswerRepository playerAnswerRepository,
-            PlayerRepository playerRepository,
+            PlayerAnswerMapper playerAnswerMapper, PlayerRepository playerRepository,
             QuestionRepository questionRepository,
             AnswerRepository answerRepository) {
         this.playerAnswerRepository = playerAnswerRepository;
+        this.playerAnswerMapper = playerAnswerMapper;
         this.playerRepository = playerRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
     }
 
-    public PlayerAnswer submitAnswer(PlayerAnswerDto answerDto) {
+    public PlayerAnswerSummaryDto submitAnswer(PlayerAnswerDto answerDto) {
+        boolean isCorrect = false;
         Player player = playerRepository.findById(answerDto.getPlayerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Player", "id", answerDto.getPlayerId()));
 
         Question question = questionRepository.findById(answerDto.getQuestionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Question", "id", answerDto.getQuestionId()));
 
-        // Vérifier si le joueur n'a pas déjà répondu à cette question
-        if (playerAnswerRepository.existsByPlayerAndQuestion(player, question)) {
-            throw new IllegalStateException("Player has already answered this question");
-        }
 
-        // Récupérer les réponses sélectionnées
-        List<Answer> selectedAnswers = answerRepository.findAllById(answerDto.getSelectedAnswerIds());
+        if (playerAnswerRepository.existsByPlayerAndQuestion(player, question)) {
+            throw new InvalidAnswerException("Player has already answered this question");
+        }
 
         PlayerAnswer playerAnswer = new PlayerAnswer();
         playerAnswer.setPlayer(player);
         playerAnswer.setQuestion(question);
-        playerAnswer.setSelectedAnswers(selectedAnswers);
         playerAnswer.setAnsweredAt(new Date());
         playerAnswer.setAnswerTime(answerDto.getAnswerTime());
 
-        // Vérifier si la réponse est correcte
-        boolean isCorrect = question.checkAnswer(answerDto.getSelectedAnswerIds());
+        if(questionRepository.findById(answerDto.getQuestionId()).get().getQuestionType().equals("CHOIX_MULTIPLE")) {
+            if(answerDto.getSelectedAnswerIds() == null || answerDto.getSelectedAnswerIds().isEmpty()) {
+                throw new InvalidAnswerException("Selected answers are required for this question");
+            }
+            List<Answer> selectedAnswers = answerRepository.findAllById(answerDto.getSelectedAnswerIds());
+            playerAnswer.setSelectedAnswers(selectedAnswers);
+            isCorrect = question.checkAnswer(answerDto.getSelectedAnswerIds());
+        }
+        else {
+            if(answerDto.getSelectedAnswer() == null) {
+                throw new InvalidAnswerException("Selected answer (true/false) is required for this question");
+            }
+            Boolean selectedAnswer = answerDto.getSelectedAnswer();
+            isCorrect = question.checkAnswer(selectedAnswer);
+        }
+
         playerAnswer.setIsCorrect(isCorrect);
 
-        // Calculer le score en fonction du temps de réponse et de l'exactitude
+
+
         int score = calculateScore(question.getPoints(), answerDto.getAnswerTime(), isCorrect);
         playerAnswer.setScoreEarned(score);
 
-        // Mettre à jour le score du joueur
         player.setScore(player.getScore() + score);
         playerRepository.save(player);
 
-        return playerAnswerRepository.save(playerAnswer);
+        PlayerAnswer playerAnswerSaved =  playerAnswerRepository.save(playerAnswer);
+        return playerAnswerMapper.INSTANCE.toDto(playerAnswerSaved);
     }
 
     private int calculateScore(int questionPoints, int answerTime, boolean isCorrect) {

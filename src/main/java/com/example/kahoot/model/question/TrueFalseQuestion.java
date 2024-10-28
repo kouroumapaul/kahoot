@@ -16,9 +16,16 @@ public class TrueFalseQuestion extends Question {
 
     @Override
     public boolean checkAnswer(Object userAnswer) {
+        System.out.println("Instance of boolean: " + (userAnswer instanceof Boolean));
+        System.out.println("User answer: " + userAnswer);
         if (!(userAnswer instanceof Boolean)) {
             throw new InvalidAnswerException("Invalid answer format for true/false question");
         }
-        return userAnswer == isCorrect;
+        return userAnswer.equals(isCorrect);
+    }
+
+    @Override
+    public String getQuestionType() {
+        return "VRAI_FAUX";
     }
 }

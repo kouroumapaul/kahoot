@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -100,6 +101,7 @@ public class UserController {
             )
     })
     @DeleteMapping("/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "Username of the user to delete", required = true)
             @PathVariable String username) {

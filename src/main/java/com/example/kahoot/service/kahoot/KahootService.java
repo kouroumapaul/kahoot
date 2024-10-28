@@ -31,23 +31,23 @@ public class KahootService {
         User user = userRepository.findById(kahootCreateDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", kahootCreateDto.getUserId()));
 
-        Kahoot kahoot = kahootMapper.INSTANCE.toKahoot(kahootCreateDto);
+        Kahoot kahoot = kahootMapper.toKahoot(kahootCreateDto);
         user.addKahoot(kahoot);
         Kahoot savedKahoot = kahootRepository.save(kahoot);
 
-        return kahootMapper.INSTANCE.toKahootDto(savedKahoot);
+        return kahootMapper.toKahootDto(savedKahoot);
     }
 
     public KahootDto getKahoot(Long kahootId) {
         Kahoot kahoot = kahootRepository.findById(kahootId)
                 .orElseThrow(() -> new ResourceNotFoundException("Kahoot", "id", kahootId));
 
-        return kahootMapper.INSTANCE.toKahootDto(kahoot);
+        return kahootMapper.toKahootDto(kahoot);
     }
 
     public Iterable<KahootSummaryDto> findAllKahoots() {
         Iterable<Kahoot> kahoots = kahootRepository.findAll();
-        return kahootMapper.INSTANCE.toKahootDtos(kahoots);
+        return kahootMapper.toKahootDtos(kahoots);
     }
 
     @Transactional
@@ -59,7 +59,7 @@ public class KahootService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", kahootUpdateDto.getUserId()));
 
 
-        Kahoot updatedKahoot = kahootMapper.INSTANCE.toKahoot(kahootUpdateDto);
+        Kahoot updatedKahoot = kahootMapper.toKahoot(kahootUpdateDto);
         updatedKahoot.setId(existingKahoot.getId());
         updatedKahoot.setUser(existingKahoot.getUser());
 
@@ -70,7 +70,7 @@ public class KahootService {
         }
 
         Kahoot savedKahoot = kahootRepository.save(updatedKahoot);
-        return kahootMapper.INSTANCE.toKahootDto(savedKahoot);
+        return kahootMapper.toKahootDto(savedKahoot);
     }
 
     @Transactional

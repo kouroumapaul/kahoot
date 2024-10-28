@@ -3,6 +3,7 @@ package com.example.kahoot.controller;
 import com.example.kahoot.dto.player.PlayerCreationDto;
 import com.example.kahoot.dto.player.PlayerDto;
 import com.example.kahoot.dto.playerAnswer.PlayerAnswerDto;
+import com.example.kahoot.dto.playerAnswer.PlayerAnswerSummaryDto;
 import com.example.kahoot.exception.ApiErrorResponse;
 import com.example.kahoot.model.PlayerAnswer;
 import com.example.kahoot.service.player.PlayerService;
@@ -18,13 +19,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/players", produces = "application/json")
 @Tag(name = "Player")
 public class PlayerController {
-
     private final PlayerService playerService;
     private final PlayerAnswerService playerAnswerService;
 
@@ -33,9 +34,6 @@ public class PlayerController {
         this.playerService = playerService;
         this.playerAnswerService = playerAnswerService;
     }
-
-
-
 
     @Operation(
             summary = "Find a player by nickname"
@@ -81,6 +79,7 @@ public class PlayerController {
             )
     })
     @PostMapping("join")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<PlayerDto> joinGame(
             @Valid @RequestBody
             @Parameter(description = "Player data for joining the game", required = true)
@@ -98,7 +97,7 @@ public class PlayerController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Answer submitted successfully",
-                    content = @Content(schema = @Schema(implementation = PlayerAnswer.class))
+                    content = @Content(schema = @Schema(implementation = PlayerAnswerSummaryDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -116,19 +115,14 @@ public class PlayerController {
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
             )
     })
-    @PostMapping("/{playerId}/answer")
-    public ResponseEntity<PlayerAnswer> submitAnswer(
-            @PathVariable
-            @Parameter(description = "ID of the player submitting the answer", required = true)
-            Long playerId,
-
+    @PostMapping("/answer")
+    public ResponseEntity<PlayerAnswerSummaryDto> submitAnswer(
             @Valid @RequestBody
             @Parameter(description = "Answer details", required = true)
             PlayerAnswerDto answerDto
     ) {
-        // Set playerId from path into the DTO
-        answerDto.setPlayerId(playerId);
-        PlayerAnswer submittedAnswer = playerAnswerService.submitAnswer(answerDto);
+        answerDto.setPlayerId(answerDto.getPlayerId());
+        PlayerAnswerSummaryDto submittedAnswer = playerAnswerService.submitAnswer(answerDto);
         return ResponseEntity.ok(submittedAnswer);
     }
 }

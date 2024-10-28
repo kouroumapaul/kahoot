@@ -26,4 +26,6 @@ public abstract class Question {
 
     public abstract boolean checkAnswer(Object userAnswer);
 
+    public abstract String getQuestionType();
+
 }

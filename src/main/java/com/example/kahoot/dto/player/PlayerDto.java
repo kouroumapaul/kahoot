@@ -9,5 +9,6 @@ import java.util.Date;
 @Data
 public class PlayerDto {
     private String nickname;
+    private Integer score;
     private GameSessionSummaryDto gameSession;
 }

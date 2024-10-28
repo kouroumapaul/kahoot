@@ -13,6 +13,7 @@ public interface PlayerMapper {
     PlayerMapper INSTANCE = Mappers.getMapper(PlayerMapper.class);
 
     @Mapping(target = "gameSession", source = "gameSession")
+    @Mapping(target = "score", source = "score")
     PlayerDto toPlayerDto(Player player);
 
     @Mapping(target = "createdAt", expression = "java(new java.util.Date())")

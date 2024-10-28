@@ -36,6 +36,11 @@ public class MultiChoiceQuestion extends Question {
                 new HashSet<>(idsReponsesCorrectes).containsAll(idsReponses);
     }
 
+    @Override
+    public String getQuestionType() {
+        return "CHOIX_MULTIPLE";
+    }
+
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.setQuestion(this);
@@ -45,4 +50,10 @@ public class MultiChoiceQuestion extends Question {
         answers.remove(answer);
         answer.setQuestion(null);
     }
+
+    public void clearAnswers() {
+        answers.clear();
+    }
+
+
 }
